@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maps Project</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #map {
+      border: 1px solid brown;
+      width: 95vw;
+      height: 95vh;
+    }
+
+
+    #pac-container {
+      padding-bottom: 12px;
+      margin-right: 12px;
+      top: 5%;
+      transform: translateX(5%);
+      z-index: 1;
+      position: absolute;
+    }
+
+    #input-search {
+      font-family: Roboto, sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      padding-left: 5px;
+      text-overflow: ellipsis;
+      width: 400px;
+      height: 30px;
+    }
+
+    #input-search:focus {
+      border-color: black;
+    }
+
+    label,
+    h3,
+    h4 {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    h3,
+    h4 {
+      font-weight: 400;
+      margin-top: 3px;
+      margin-bottom: 3px;
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 26px;
+    }
+
+    h4 {
+      margin-top: 10px;
+      font-size: 15px;
+    }
+  </style>
+
+</head>
+
+
+<body>
+  <div id="pac-container">
+    <h3>Find a restaurant</h3>
+    <div class="controls">
+      <select name="Cuisine" id="cuisine">
+        <option selected disabled hidden>Cuisine</option>
+        <option value="filipino">Filipino</option>
+        <option value="chinese">Chinese</option>
+        <option value="italian">Italian</option>
+        <option value="american">American</option>
+        <option value="japanese">Japanese</option>
+        <option value="french">French</option>
+        <option value="korean">Korean</option>
+        <option value="mexican">Mexican</option>
+      </select>
+      <select name="Type" id="type">
+        <option selected disabled hidden>Type</option>
+        <option value="cafe">Cafe</option>
+        <option value="fast food">Fast Food</option>
+        <option value="fine dining">Fine Dining</option>
+      </select>
+    </div>
+    <div>
+      <h4>Select a Shape To Draw</h4>
+      <input type="radio" name="shape" id="rectangle" value="rectangle">
+      <label for="rectangle">Rectangle</label>
+      <input type="radio" name="shape" id="circle" value="circle">
+      <label for="circle">Circle</label>
+    </div>
+  </div>
+  <div id="map">
+  </div>
+  <script src="./globals.js"></script>
+  <script src="./utils.js"></script>
+  <script src="./keys.js"></script>
+  <script src="./callbacks.js"></script>
+  <script src="./main.js"></script>
+</body>
+
+</html>
