@@ -5,7 +5,8 @@ const nearbySearchCallback = (results, status, pagination) => {
       .filter(r => filterByRestaurant(r.types))
       .forEach(data => {
         // add to plots list
-        plots.push(createPlot(data))
+        plots.push(createPlot(data));
+        restaurant_data.push(data)
       })
     if (pagination.hasNextPage) {
       setTimeout(() => {

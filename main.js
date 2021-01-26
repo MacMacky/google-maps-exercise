@@ -9,7 +9,7 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
       // pan to 'clicked' restaurant    
       map.panTo(new google.maps.LatLng(marker.position.lat(), marker.position.lng()))
       // request params
-      const params = { placeId, fields: ['name', 'formatted_address', 'rating', 'formatted_phone_number'] }
+      const params = { placeId }
       // set animation to bounce
       marker.setAnimation(google.maps.Animation.BOUNCE);
       // get times visited from `localStorage`
@@ -19,25 +19,39 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
       // updated visited time to localStorage
       localStorage.setItem(`${placeId}_visited`, visited);
       // check if `place` details already exists in localStorage
-      if (localStorage.getItem(`${placeId}_details`)) {
-        const [name, formatted_address] = localStorage.getItem(`${placeId}_details`).split(':')
-        openInfoWindow({
-          map,
-          marker,
-          content: `${[name, ...formatted_address.split(','), `<strong>Times visited: ${visited}</strong>`].join('<br>')}`,
-          infoWindow
-        });
-        return;
-      }
+      // if (localStorage.getItem(`${placeId}_details`)) {
+      //   const [name, formatted_address] = localStorage.getItem(`${placeId}_details`).split(':');
+      //   openInfoWindow({
+      //     map,
+      //     marker,
+      //     content: `${[name, ...formatted_address.split(','), `<strong>Times visited: ${visited}</strong>`].join('<br>')}`,
+      //     infoWindow
+      //   });
+      //   return;
+      // }
       // get details from api
       service.getDetails(params, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           const { name, formatted_address, rating, formatted_phone_number } = place;
+
+          log(rating, restaurant_data.filter(restaurant => restaurant.place_id !== place.place_id)
+            .map(r => r.rating))
+
+          const { lower, higher, equal } = compareRatings(place.place_id, rating);
+          const low = getNoun(lower);
+          const high = getNoun(higher);
+          const eq = getNoun(equal);
+
+          const lower_message = `<strong>There ${low.many} ${lower} restaurant${low.length} with a lower rating.</strong>`
+          const higher_message = `<strong>There ${high.many} ${higher} restaurant${high.length} with a higher rating.</strong>`
+          const eq_message = `<strong>There ${eq.many} ${equal} restaurant${eq.length} with the same rating.</strong>`
+
+
           // open info window
           openInfoWindow({
             map,
             marker,
-            content: `${[name, ...formatted_address.split(','), `<strong>Times visited: ${visited}</strong>`].join('<br>')}`,
+            content: `${[`<h5>${name}</h5>`, ...formatted_address.split(','), eq_message, higher_message, lower_message, `<strong>Times visited: ${visited}</strong>`].join('<br>')}`,
             infoWindow
           });
           // save `place` details for caching purposes

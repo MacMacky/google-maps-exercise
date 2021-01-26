@@ -1,6 +1,6 @@
 const log = console.log;
 const MAIN_URL = 'https://maps.googleapis.com/maps/api';
-let plots = [], contained_restaurants = [];
+let plots = [], contained_restaurants = [], restaurant_data = [];
 let service,
   direction_service,
   direction_renderer,
