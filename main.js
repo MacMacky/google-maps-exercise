@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const len = contained_restaurants.length;
           openInfoWindow({
             infoWindow: shape_info_window,
-            content: `There are ${len} restaurant${len === 1 ? '' : 's'} in the rectangle.`,
+            content: `There ${len === 1 ? 'is' : 'are'} ${len} restaurant${len === 1 ? '' : 's'} in the rectangle.`,
             map,
             position: rectangle.getBounds().getCenter()
           })
