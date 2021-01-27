@@ -63,4 +63,19 @@ const removePlots = () => {
     plot && plot.setMap(null);
   });
   plots = [], restaurant_data = [];
+};
+
+const makeContent = ({ image, name, rating, formatted_address, higher, lower, equal, visited }) => {
+  return `<div class="info-container">
+  <p>
+    ${image}
+  </p>
+   <h5>${name}</h5>
+   <p><strong>Rating</strong>: ${rating}</p>
+   <p><strong>Address</strong>: ${formatted_address}</p>
+   <p><strong>Restaurants with Higher Rating</strong>: ${higher}</p>
+   <p><strong>Restaurants with Lower Rating</strong>: ${lower}</p>
+   <p><strong>Restaurants with Equal Rating</strong>: ${equal}</p>
+   <p><strong>Times visited:</strong> ${visited}</p>
+</div>`
 }

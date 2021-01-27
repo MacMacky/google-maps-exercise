@@ -19,43 +19,60 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
       // updated visited time to localStorage
       localStorage.setItem(`${placeId}_visited`, visited);
       // check if `place` details already exists in localStorage
-      // if (localStorage.getItem(`${placeId}_details`)) {
-      //   const [name, formatted_address] = localStorage.getItem(`${placeId}_details`).split(':');
-      //   openInfoWindow({
-      //     map,
-      //     marker,
-      //     content: `${[name, ...formatted_address.split(','), `<strong>Times visited: ${visited}</strong>`].join('<br>')}`,
-      //     infoWindow
-      //   });
-      //   return;
-      // }
+      if (localStorage.getItem(`${placeId}_details`)) {
+        const [name, formatted_address] = localStorage.getItem(`${placeId}_details`).split(':');
+        const [src, rating] = localStorage.getItem(`${placeId}_photo_rating`).split('__');
+        const { lower, higher, equal } = compareRatings(placeId, rating);
+
+        openInfoWindow({
+          map,
+          marker,
+          content: makeContent({
+            image: `<img src=${src} alt="restaurant image" width="200px" height="200px" />`,
+            higher,
+            lower,
+            equal,
+            visited,
+            name,
+            rating,
+            formatted_address
+          }),
+          infoWindow
+        });
+        return;
+      }
       // get details from api
       service.getDetails(params, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          const { name, formatted_address, rating, formatted_phone_number } = place;
-
-          log(rating, restaurant_data.filter(restaurant => restaurant.place_id !== place.place_id)
-            .map(r => r.rating))
-
+          const { name, formatted_address, rating, photos } = place;
           const { lower, higher, equal } = compareRatings(place.place_id, rating);
-          const low = getNoun(lower);
-          const high = getNoun(higher);
-          const eq = getNoun(equal);
 
-          const lower_message = `<strong>There ${low.many} ${lower} restaurant${low.length} with a lower rating.</strong>`
-          const higher_message = `<strong>There ${high.many} ${higher} restaurant${high.length} with a higher rating.</strong>`
-          const eq_message = `<strong>There ${eq.many} ${equal} restaurant${eq.length} with the same rating.</strong>`
+          const image = new Image();
+          image.alt = 'restaurant image';
+          image.src = (photos[0] || photo[1]).getUrl();
+          image.width = 250;
+          image.height = 250;
 
-
-          // open info window
-          openInfoWindow({
-            map,
-            marker,
-            content: `${[`<h5>${name}</h5>`, ...formatted_address.split(','), eq_message, higher_message, lower_message, `<strong>Times visited: ${visited}</strong>`].join('<br>')}`,
-            infoWindow
-          });
-          // save `place` details for caching purposes
-          localStorage.setItem(`${placeId}_details`, `${name}:${formatted_address}`)
+          image.onload = function () {
+            openInfoWindow({
+              map,
+              marker,
+              content: makeContent({
+                image: image.outerHTML,
+                name,
+                formatted_address,
+                rating,
+                lower,
+                equal,
+                higher,
+                visited
+              }),
+              infoWindow
+            });
+            // save `place` details for caching purposes
+            localStorage.setItem(`${placeId}_details`, `${name}:${formatted_address}`);
+            localStorage.setItem(`${placeId}_photo_rating`, `${image.src}__${rating}`);
+          }
         }
       })
     }

@@ -21,11 +21,14 @@
 
 
     #pac-container {
-      padding-bottom: 12px;
+      padding: 15px;
+      border-radius: 3px;
+      border: 1px solid brown;
       margin-right: 12px;
-      top: 5%;
-      transform: translateX(5%);
+      top: 100px;
+      left: 34px;
       z-index: 1;
+      background: white;
       position: absolute;
     }
 
@@ -58,19 +61,43 @@
       margin-bottom: 3px;
     }
 
+    .controls {
+      text-align: center;
+    }
+
     h3 {
-      font-size: 26px;
+      font-size: 30px;
+      margin-bottom: 15px;
     }
 
     h4 {
-      margin-top: 10px;
-      font-size: 20px;
+      margin: 10px 0px;
+      font-size: 25px;
     }
 
     h5 {
       font-size: 20px;
       margin-top: 3px;
       margin-bottom: 3px;
+    }
+
+    .info-container {
+      font-family: 'Roboto', Courier, monospace;
+    }
+
+    .info-container p {
+      margin: 6px;
+      text-align: center;
+    }
+
+    .res-img {
+      background: white;
+      max-width: 200px;
+      background: url('./loading.gif');
+    }
+
+    .info-container p>strong {
+      font-size: 15px;
     }
   </style>
 
@@ -100,11 +127,13 @@
       </select>
     </div>
     <div>
-      <h4>Select a Shape To Draw</h4>
-      <input type="radio" name="shape" id="rectangle" value="rectangle">
-      <label for="rectangle">Rectangle</label>
-      <input type="radio" name="shape" id="circle" value="circle">
-      <label for="circle">Circle</label>
+      <h4>Select a Shape</h4>
+      <div class="controls">
+        <input type="radio" name="shape" id="rectangle" value="rectangle">
+        <label for="rectangle">Rectangle</label>
+        <input type="radio" name="shape" id="circle" value="circle">
+        <label for="circle">Circle</label>
+      </div>
     </div>
   </div>
   <div id="map">

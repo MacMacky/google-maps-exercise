@@ -10,4 +10,5 @@ let service,
   shape_info_window = null,
   details_info_window = null,
   rectangle = null,
-  circle = null;;
+  circle = null,
+  count = 0;
