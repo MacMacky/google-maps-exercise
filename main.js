@@ -1,3 +1,5 @@
+google.charts.load('current', { packages: ['corechart', 'bar'] });
+
 const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
   return () => {
     if (marker.getAnimation() !== null) {
@@ -205,6 +207,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    document.getElementById('show-analytics').addEventListener('click', () => {
+      if (plots.length) {
+        // data for `chart`
+        const data = google.visualization.arrayToDataTable([
+          ['Rating', `Category of ${capitalize(cuisine)} ${capitalize(type)}`,],
+          ...restaurant_data.map(r => [r.name, r.rating])
+        ]);
+        // options for `chart`
+        const o = {
+          title: `Rating of Restaurants based on Category`,
+          chartArea: { width: '75%' },
+          legend: {
+            position: 'top'
+          },
+          width: 750,
+          height: 500,
+          hAxis: {
+            title: 'Restaurants',
+            minValue: 0,
+          },
+          vAxis: {
+            title: 'Ratings',
+            maxValue: 5
+          }
+        };
+        // create `chart` instance of an element
+        const chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+        // draw
+        chart.draw(data, o)
+      }
+    });
+
     document.getElementById('rectangle').addEventListener('change', () => {
       // close info window if it's open
       if (shape_info_window.isOpen) {
@@ -303,21 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // check if `plots` has data
       if (plots.length) {
-        // const { distance, placeId, position } = plots.reduce((acc, { position, place }) => {
-        //   // compute the distance between two `latLng` to 
-        //   // get the nearest restaurant base on the `position` click
-        //   const distance = google.maps.geometry.spherical.computeDistanceBetween(latLng, position);
-        //   // check if current `distance` is lower the than old `distance`
-        //   if (distance < acc.distance) {
-        //     return {
-        //       distance,
-        //       placeId: place.placeId,
-        //       position
-        //     }
-        //   }
-        //   return acc;
-        // }, { distance: Number.MAX_VALUE, placeId: null });
-
         const { distance, placeId, position } = getNearestRestaurant(latLng)
         // get the details of the `nearest` restaurant
         service.getDetails({ placeId }, getDetails({ map, distance, origin: latLng, destination: position, infoWindow: details_info_window, renderer: direction_renderer }));

@@ -32,6 +32,13 @@
       position: absolute;
     }
 
+    #chart {
+      bottom: 100px;
+      left: 50px;
+      z-index: 1;
+      position: absolute;
+    }
+
     #input-search {
       font-family: Roboto, sans-serif;
       font-size: 15px;
@@ -100,10 +107,16 @@
       font-size: 15px;
     }
 
-    #direction {
+    #direction,
+    #show-analytics {
       display: block;
       margin: 0 auto;
       padding: 5px;
+    }
+
+    #show-analytics {
+      margin-top: 15px;
+      padding: 5px 17px;
     }
   </style>
 
@@ -112,7 +125,7 @@
 
 <body>
   <div id="pac-container">
-    <h3>Find a restaurant</h3>
+    <h3>Find restaurants</h3>
     <div class="controls">
       <select name="Cuisine" id="cuisine">
         <option selected disabled hidden>Cuisine</option>
@@ -141,9 +154,13 @@
         <label for="circle">Circle</label>
       </div>
     </div>
+    <button id="show-analytics">
+      Analytics
+    </button>
   </div>
-  <div id="map">
-  </div>
+  <div id="chart"></div>
+  <div id="map"></div>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="./globals.js"></script>
   <script src="./utils.js"></script>
   <script src="./keys.js"></script>

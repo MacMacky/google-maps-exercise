@@ -110,3 +110,6 @@ const getNearestRestaurant = (from, place_id = null) => {
   }, { distance: Number.MAX_VALUE, placeId: null, position: null });
 }
 
+const capitalize = (str = '') => {
+  return `${str.charAt(0).toLocaleUpperCase()}${str.slice(1)}`;
+}
