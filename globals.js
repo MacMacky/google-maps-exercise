@@ -11,4 +11,6 @@ let service,
   details_info_window = null,
   rectangle = null,
   circle = null,
-  count = 0;
+  count = 0,
+  column_chart = null,
+  pie_chart = null;

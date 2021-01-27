@@ -207,15 +207,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    document.getElementById('show-analytics').addEventListener('click', () => {
+    document.getElementById('ratings').addEventListener('change', () => {
+      // if `pie_chart`  is open remove it
+      if (pie_chart) {
+        pie_chart.clearChart();
+      }
       if (plots.length) {
         // data for `chart`
-        const data = google.visualization.arrayToDataTable([
+        const column_chart_data = google.visualization.arrayToDataTable([
           ['Rating', `Category of ${capitalize(cuisine)} ${capitalize(type)}`,],
           ...restaurant_data.map(r => [r.name, r.rating])
         ]);
         // options for `chart`
-        const o = {
+        const column_chart_options = {
           title: `Rating of Restaurants based on Category`,
           chartArea: { width: '75%' },
           legend: {
@@ -233,11 +237,64 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         };
         // create `chart` instance of an element
-        const chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+        column_chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+
         // draw
-        chart.draw(data, o)
+        column_chart.draw(column_chart_data, column_chart_options);
       }
     });
+
+
+    document.getElementById('status').addEventListener('change', () => {
+      // if `column_chart`  is open remove it
+      if (column_chart) {
+        column_chart.clearChart();
+      }
+      if (plots.length) {
+
+        const data_to_filter = restaurant_data
+          .map(r => r.opening_hours);
+
+        // open restaurants
+        const open = data_to_filter.filter(r => (r || {}).open_now).length;
+        // close restaurants
+        const close = data_to_filter.filter(r => (r || {}).open_now === false).length;
+        // unknown if open or close
+        const unknown = data_to_filter.filter(r => (r || {}).open_now === undefined).length;
+
+        const pie_chart_data = google.visualization.arrayToDataTable([
+          ['Restaurants', 'number of restaurants'],
+          ['Open', open],
+          ['Close', close],
+          ['Unknown', unknown]
+        ])
+
+        const pie_chart_options = {
+          title: 'Restaurant Status',
+          width: 600,
+          height: 400,
+        };
+
+        pie_chart = new google.visualization.PieChart(document.getElementById('chart'));
+        pie_chart.draw(pie_chart_data, pie_chart_options);
+      }
+
+    });
+
+    document.getElementById('clear-charts').addEventListener('click', () => {
+      // clear charts
+      if (column_chart) {
+        column_chart.clearChart();
+      }
+
+      if (pie_chart) {
+        pie_chart.clearChart();
+      }
+
+      document.getElementById('status').checked = false;
+      document.getElementById('ratings').checked = false;
+
+    })
 
     document.getElementById('rectangle').addEventListener('change', () => {
       // close info window if it's open

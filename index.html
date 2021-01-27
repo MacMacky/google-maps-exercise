@@ -33,7 +33,7 @@
     }
 
     #chart {
-      bottom: 100px;
+      bottom: 50px;
       left: 50px;
       z-index: 1;
       position: absolute;
@@ -56,13 +56,15 @@
     label,
     h3,
     h4,
-    h5 {
+    h5,
+    h6 {
       font-family: 'Roboto', sans-serif;
       text-align: center;
     }
 
     h3,
-    h4 {
+    h4,
+    h6 {
       font-weight: 400;
       margin-top: 3px;
       margin-bottom: 3px;
@@ -108,13 +110,15 @@
     }
 
     #direction,
-    #show-analytics {
+    #show-analytics,
+    #clear-charts {
       display: block;
       margin: 0 auto;
       padding: 5px;
     }
 
-    #show-analytics {
+    #show-analytics,
+    #clear-charts {
       margin-top: 15px;
       padding: 5px 17px;
     }
@@ -154,8 +158,17 @@
         <label for="circle">Circle</label>
       </div>
     </div>
-    <button id="show-analytics">
-      Analytics
+    <div>
+      <h4>Analytics</h5>
+        <div class="controls">
+          <input type="radio" name="analytics" id="ratings" value="ratings">
+          <label for="rectangle">Ratings</label>
+          <input type="radio" name="analytics" id="status" value="status">
+          <label for="circle">Restaurant Status</label>
+        </div>
+    </div>
+    <button id="clear-charts">
+      Remove Charts
     </button>
   </div>
   <div id="chart"></div>
