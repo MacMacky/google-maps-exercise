@@ -21,7 +21,8 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
       // check if `place` details already exists in localStorage
       if (localStorage.getItem(`${placeId}_details`)) {
         const [name, formatted_address] = localStorage.getItem(`${placeId}_details`).split(':');
-        const [src, rating] = localStorage.getItem(`${placeId}_photo_rating`).split('__');
+        const src = localStorage.getItem(`${placeId}_photo`);
+        const rating = localStorage.getItem(`${placeId}_rating`);
         const { lower, higher, equal } = compareRatings(placeId, rating);
 
         openInfoWindow({
@@ -35,7 +36,8 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
             visited,
             name,
             rating,
-            formatted_address
+            formatted_address,
+            placeId
           }),
           infoWindow
         });
@@ -44,7 +46,7 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
       // get details from api
       service.getDetails(params, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          const { name, formatted_address, rating, photos } = place;
+          const { name, formatted_address, rating, photos, geometry: { location } } = place;
           const { lower, higher, equal } = compareRatings(place.place_id, rating);
 
           const image = new Image();
@@ -65,13 +67,16 @@ const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
                 lower,
                 equal,
                 higher,
-                visited
+                visited,
+                placeId: place.place_id
               }),
               infoWindow
             });
             // save `place` details for caching purposes
             localStorage.setItem(`${placeId}_details`, `${name}:${formatted_address}`);
-            localStorage.setItem(`${placeId}_photo_rating`, `${image.src}__${rating}`);
+            localStorage.setItem(`${placeId}_photo`, `${image.src}`);
+            localStorage.setItem(`${placeId}_rating`, `${rating}`)
+
           }
         }
       })
@@ -162,6 +167,27 @@ document.addEventListener('DOMContentLoaded', () => {
         keyword: `${cuisine} ${type}`
       }, nearbySearchCallback);
     }
+
+    document.body.addEventListener('click', (e) => {
+      if (e.target.nodeName === 'BUTTON' && e.target.id === 'direction') {
+        // check if `details` info window is currently opens
+        if (details_info_window.isOpen) {
+          closeInfoWindow({ infoWindow: details_info_window })
+        }
+
+        // get `place` data attribute
+        const place_id = e.target.dataset.placeid;
+        // get `details` from array base on `placeid`
+        const place_details = restaurant_data.find(restaurant => restaurant.place_id === place_id);
+
+        // check if `plots` has data
+        if (plots.length) {
+          const { distance, placeId, position } = getNearestRestaurant(place_details.geometry.location, place_id);
+          // get the details of the `nearest` restaurant
+          service.getDetails({ placeId }, getDetails({ map, distance, origin: place_details.geometry.location, destination: position, infoWindow: details_info_window, renderer: direction_renderer }));
+        }
+      }
+    })
 
     document.getElementById('cuisine').addEventListener('change', ({ target: { value } }) => {
       cuisine = value;
@@ -277,20 +303,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // check if `plots` has data
       if (plots.length) {
-        const { distance, placeId, position } = plots.reduce((acc, { position, place }) => {
-          // compute the distance between two `latLng` to 
-          // get the nearest restaurant base on the `position` click
-          const distance = google.maps.geometry.spherical.computeDistanceBetween(latLng, position);
-          // check if current `distance` is lower the than old `distance`
-          if (distance < acc.distance) {
-            return {
-              distance,
-              placeId: place.placeId,
-              position
-            }
-          }
-          return acc;
-        }, { distance: Number.MAX_VALUE, placeId: null });
+        // const { distance, placeId, position } = plots.reduce((acc, { position, place }) => {
+        //   // compute the distance between two `latLng` to 
+        //   // get the nearest restaurant base on the `position` click
+        //   const distance = google.maps.geometry.spherical.computeDistanceBetween(latLng, position);
+        //   // check if current `distance` is lower the than old `distance`
+        //   if (distance < acc.distance) {
+        //     return {
+        //       distance,
+        //       placeId: place.placeId,
+        //       position
+        //     }
+        //   }
+        //   return acc;
+        // }, { distance: Number.MAX_VALUE, placeId: null });
+
+        const { distance, placeId, position } = getNearestRestaurant(latLng)
         // get the details of the `nearest` restaurant
         service.getDetails({ placeId }, getDetails({ map, distance, origin: latLng, destination: position, infoWindow: details_info_window, renderer: direction_renderer }));
 

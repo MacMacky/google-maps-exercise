@@ -57,7 +57,6 @@ const getNoun = (len = 0) => {
   }
 }
 
-
 const removePlots = () => {
   plots.forEach(plot => {
     plot && plot.setMap(null);
@@ -65,7 +64,7 @@ const removePlots = () => {
   plots = [], restaurant_data = [];
 };
 
-const makeContent = ({ image, name, rating, formatted_address, higher, lower, equal, visited }) => {
+const makeContent = ({ image, name, rating, formatted_address, higher, lower, equal, visited, placeId }) => {
   return `<div class="info-container">
   <p>
     ${image}
@@ -77,5 +76,37 @@ const makeContent = ({ image, name, rating, formatted_address, higher, lower, eq
    <p><strong>Restaurants with Lower Rating</strong>: ${lower}</p>
    <p><strong>Restaurants with Equal Rating</strong>: ${equal}</p>
    <p><strong>Times visited:</strong> ${visited}</p>
-</div>`
+   <button id="direction" style="display:block;margin:0 auto;" data-placeid=${placeId}> Show location to the nearest restaurant.</button >
+</div > `
+};
+
+
+const getNearestRestaurant = (from, place_id = null) => {
+  return plots.reduce((acc, { position, place }) => {
+    // compute the distance between two `latLng` to 
+    // get the nearest restaurant base on the `position` click
+    const distance = google.maps.geometry.spherical.computeDistanceBetween(from, position);
+    // check if current `distance` is lower the than old `distance`
+    if (place_id) {
+      if (distance < acc.distance && place.placeId !== place_id) {
+        return {
+          distance,
+          placeId: place.placeId,
+          position
+        }
+      } else {
+        return acc;
+      }
+    }
+
+    if (distance < acc.distance) {
+      return {
+        distance,
+        placeId: place.placeId,
+        position
+      }
+    }
+    return acc;
+  }, { distance: Number.MAX_VALUE, placeId: null, position: null });
 }
+
