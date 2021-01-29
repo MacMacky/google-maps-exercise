@@ -2,12 +2,18 @@ google.charts.load('current', { packages: ['corechart', 'bar'] });
 
 const markerClickCallback = ({ marker, service, map, infoWindow, placeId }) => {
   return () => {
+
     if (marker.getAnimation() !== null) {
       // stop the animation or in this case stop the 'bouncing'
       marker.setAnimation(null);
       // close info window
       closeInfoWindow({ infoWindow })
     } else {
+      // set map to null
+      if (details_info_window.isOpen) {
+        closeInfoWindow({ infoWindow: details_info_window })
+      }
+      direction_renderer.setMap(null)
       // pan to 'clicked' restaurant    
       map.panTo(new google.maps.LatLng(marker.position.lat(), marker.position.lng()))
       // request params
@@ -388,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     map.addListener('click', ({ latLng }) => {
+
       // check if `details` info window is currently opens
       if (details_info_window.isOpen) {
         closeInfoWindow({ infoWindow: details_info_window })

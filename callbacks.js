@@ -46,6 +46,7 @@ const getDetails = ({ distance, origin, infoWindow, renderer, map, destination }
       })
       direction_service.route({ destination, origin, travelMode: google.maps.TravelMode.DRIVING }, (response, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
+          renderer.setMap(map);
           renderer.setDirections(response)
         }
       })
